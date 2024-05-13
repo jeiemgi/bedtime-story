@@ -1,21 +1,18 @@
+import { Stack } from "expo-router";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
 import "react-native-reanimated";
+import { useEffect } from "react";
+import { useFonts } from "expo-font";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import styled from "styled-components/native";
+import * as SplashScreen from "expo-splash-screen";
+import { Colors } from "@/constants/Colors";
 
 SplashScreen.preventAutoHideAsync();
 
-const HeaderWrapper = styled.View`
-  padding: 16px;
-`;
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
@@ -38,12 +35,35 @@ export default function RootLayout() {
     return null;
   }
 
+  const headerTintColor =
+    colorScheme === "dark" ? Colors.dark.tint : Colors.light.tint;
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="story-create" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+      <Stack
+        screenOptions={{
+          headerTintColor,
+          headerTitle: "",
+          headerTransparent: true,
+          headerBackTitleVisible: false,
+        }}
+      >
+        <Stack.Screen
+          name={"index"}
+          options={{
+            title: "Home",
+          }}
+        />
+        <Stack.Screen
+          name={"profile-create"}
+          options={{ title: "Create a profile" }}
+        />
+        <Stack.Screen
+          name={"story"}
+          options={{
+            title: "Create a story",
+          }}
+        />
+        <Stack.Screen name={"+not-found"} />
       </Stack>
     </ThemeProvider>
   );

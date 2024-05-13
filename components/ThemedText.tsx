@@ -19,7 +19,6 @@ export function ThemedText({
   ...rest
 }: ThemedTextProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
-
   return (
     <Text
       style={[
@@ -64,7 +63,7 @@ const styles = StyleSheet.create({
   },
   h2: {
     fontSize: 30,
-    lineHeight: 30,
+    lineHeight: 35,
     fontFamily: "PlayfairDisplayBold",
   },
   h3: {
