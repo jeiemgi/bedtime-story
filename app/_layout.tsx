@@ -4,12 +4,12 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import "react-native-reanimated";
+import Colors from "@/constants/Colors";
 import { useEffect } from "react";
 import { useFonts } from "expo-font";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import useColorScheme from "@/hooks/useColorScheme";
 import * as SplashScreen from "expo-splash-screen";
-import { Colors } from "@/constants/Colors";
+import "react-native-reanimated";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -47,22 +47,9 @@ export default function RootLayout() {
           headerBackTitleVisible: false,
         }}
       >
-        <Stack.Screen
-          name={"index"}
-          options={{
-            title: "Home",
-          }}
-        />
-        <Stack.Screen
-          name={"profile-create"}
-          options={{ title: "Create a profile" }}
-        />
-        <Stack.Screen
-          name={"story"}
-          options={{
-            title: "Create a story",
-          }}
-        />
+        <Stack.Screen name={"index"} />
+        <Stack.Screen name={"profile"} />
+        <Stack.Screen name={"story"} />
         <Stack.Screen name={"+not-found"} />
       </Stack>
     </ThemeProvider>

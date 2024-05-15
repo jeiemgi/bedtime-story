@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
-import { useLocalSearchParams } from "expo-router";
-import { ThemedText } from "@/components/ThemedText";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import useThemeColor from "@/hooks/useThemeColor";
+import Text from "@/components/themed/Text";
+import Button from "@/components/themed/Button";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { ActivityIndicator } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import styled from "styled-components/native";
-import { ThemedButton } from "@/components/ThemedButton";
-import { DEFAULT_STORY } from "@/constants/data";
+import { DEFAULT_STORY, DEFAULT_TITLE, StoryProfile } from "@/constants/data";
 import ScreenTemplate, {
   ScreenTemplateScroll,
-} from "@/components/ScreenTemplate";
-
-export type StoryProfile = { name: string; age: string; interests: string };
+} from "@/components/themed/ScreenTemplate";
+import styled from "styled-components/native";
+import Box from "@/components/themed/Box";
 
 const TopContainer = styled(Animated.View)`
   margin-bottom: 32px;
@@ -30,59 +29,67 @@ function Story() {
   const params = useLocalSearchParams<StoryProfile>();
   const indicatorColor = useThemeColor({}, "text");
   const backgroundColor = useThemeColor({}, "background");
+  const [title, setTitle] = useState<string | null>(null);
   const [story, setStory] = useState<string | null>(null);
 
   useEffect(() => {
+    // import { generateStory } from "@/js/api";
     // Example on how it would work when actually fetching the API.
     // SEE "/js/api.ts" to se the example.
-    // const getPrompt = () => {
-    //   return `Write a really short bedtime story for a ${params.age}-year-old whose interests are ${params.interests}.
-    //   Write it about something he is interested in, not about himself, try to be concise and straight to the story, do not give context.`;
-    // };
     //
     // const fetch = async () => {
-    //   setStory(null);
     //   const prompt = getPrompt();
     //   await generateStory(prompt).then((res) => {
     //     const storyRes = res?.choices[0].message.content;
     //     if (storyRes) setStory(storyRes);
     //   });
     // };
+    //
+    // setStory(null);
     // fetch()
 
+    // Just test data
     setTimeout(() => {
       setStory(DEFAULT_STORY);
+      setTitle(DEFAULT_TITLE);
     }, 2000);
   }, []);
 
+  const router = useRouter();
   return (
     <>
       {story ? (
-        <ScreenTemplateScroll BottomView={<ThemedButton title={"Complete"} />}>
-          <ThemedText
+        <ScreenTemplateScroll
+          BottomView={
+            <Button title={"Go back home"} onPress={() => router.back()} />
+          }
+        >
+          <Text
             type={"display"}
             align={"center"}
             style={{ marginBottom: 32, marginHorizontal: 16 }}
           >
-            Finny's Underwater Race
-          </ThemedText>
-          <ThemedText
-            style={{
-              fontSize: 18,
-              lineHeight: 25,
-              textAlign: "justify",
-            }}
-          >
-            {story}
-          </ThemedText>
-          <ThemedText
+            {title}
+          </Text>
+          <Box mb={8}>
+            <Text
+              style={{
+                fontSize: 18,
+                lineHeight: 25,
+                textAlign: "justify",
+              }}
+            >
+              {story}
+            </Text>
+          </Box>
+          <Text
             style={{
               fontSize: 18,
               lineHeight: 25,
             }}
           >
             Good night {params.name}! 🌝
-          </ThemedText>
+          </Text>
         </ScreenTemplateScroll>
       ) : (
         <AnimatedView
@@ -92,16 +99,16 @@ function Story() {
         >
           <ScreenTemplate>
             <TopContainer>
-              <ThemedText
+              <Text
                 align={"center"}
                 style={{ marginBottom: 16 }}
                 type={"display"}
               >
                 Hi {params.name}!
-              </ThemedText>
-              <ThemedText align={"center"} type={"defaultSemiBold"}>
+              </Text>
+              <Text align={"center"} type={"defaultSemiBold"}>
                 We're creating your next big adventure ...
-              </ThemedText>
+              </Text>
             </TopContainer>
 
             <ActivityIndicator color={indicatorColor} />

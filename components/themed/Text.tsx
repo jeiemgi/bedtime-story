@@ -1,38 +1,15 @@
-import { Text, type TextProps, StyleSheet, TextStyle } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import useThemeColor from "@/hooks/useThemeColor";
+import { Text as RawText, StyleSheet, TextStyle } from "react-native";
+import { type TextProps as RNTextProps } from "react-native";
 
-type TextType = keyof typeof styles;
+export type TextType = keyof typeof styles;
 
-export type ThemedTextProps = TextProps & {
+export type TextProps = RNTextProps & {
   lightColor?: string;
   darkColor?: string;
   align?: TextStyle["textAlign"];
   type?: TextType;
 };
-
-export function ThemedText({
-  align,
-  style,
-  lightColor,
-  darkColor,
-  type = "default",
-  ...rest
-}: ThemedTextProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
-  return (
-    <Text
-      style={[
-        {
-          color,
-          textAlign: align,
-        },
-        styles[type] ? styles[type] : undefined,
-        style,
-      ]}
-      {...rest}
-    />
-  );
-}
 
 const styles = StyleSheet.create({
   default: {
@@ -83,3 +60,29 @@ const styles = StyleSheet.create({
     fontFamily: "SourceSans3",
   },
 });
+
+function Text({
+  align,
+  style,
+  lightColor,
+  darkColor,
+  type = "default",
+  ...rest
+}: TextProps) {
+  const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
+  return (
+    <RawText
+      style={[
+        {
+          color,
+          textAlign: align,
+        },
+        styles[type] ? styles[type] : undefined,
+        style,
+      ]}
+      {...rest}
+    />
+  );
+}
+
+export default Text;

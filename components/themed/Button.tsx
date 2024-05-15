@@ -1,16 +1,16 @@
-import styled from "styled-components/native";
-import { Colors } from "@/constants/Colors";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import useThemeColor from "@/hooks/useThemeColor";
+import Colors from "@/constants/Colors";
+import Text from "@/components/themed/Text";
+import View from "@/components/themed/View";
 import { Pressable, ViewStyle } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import styled from "styled-components/native";
 import { type PressableProps } from "react-native";
 
 interface ButtonProps extends PressableProps {
   title: string;
 }
 
-const InnerStyle = styled(ThemedView)`
+const InnerStyle = styled(View)`
   height: 60px;
   border-width: 2px;
   border-radius: 10px;
@@ -18,18 +18,18 @@ const InnerStyle = styled(ThemedView)`
   justify-content: center;
 `;
 
-const Text = styled(ThemedText)`
+const ButtonText = styled(Text)`
   font-size: 20px;
   line-height: normal;
   font-family: "SourceSansBold";
 `;
 
-Text.defaultProps = {
+ButtonText.defaultProps = {
   lightColor: Colors.dark.text,
   darkColor: Colors.light.text,
 };
 
-export function ThemedButton({ title, disabled, ...props }: ButtonProps) {
+function Button({ title, disabled, ...props }: ButtonProps) {
   const backgroundColor = useThemeColor({
     light: Colors.dark.background,
     dark: Colors.dark.background,
@@ -44,8 +44,10 @@ export function ThemedButton({ title, disabled, ...props }: ButtonProps) {
       {...props}
     >
       <InnerStyle style={{ backgroundColor }}>
-        <Text>{title}</Text>
+        <ButtonText>{title}</ButtonText>
       </InnerStyle>
     </Pressable>
   );
 }
+
+export default Button;

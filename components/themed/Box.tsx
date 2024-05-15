@@ -1,4 +1,5 @@
-import { StyleProp, View, ViewProps, ViewStyle } from "react-native";
+import View from "@/components/themed/View";
+import { StyleProp, ViewProps, ViewStyle } from "react-native";
 
 export const BoxUnitMultiplier = 8;
 
@@ -20,6 +21,7 @@ export interface BoxProps {
   mr?: BoxUnit;
   mt?: BoxUnit;
   mb?: BoxUnit;
+  flex?: number;
   flexDirection?: ViewStyle["flexDirection"];
   alignItems?: ViewStyle["alignItems"];
   justifyContent?: ViewStyle["justifyContent"];
@@ -79,11 +81,12 @@ const Box = ({
   style,
   children,
   flexDirection,
+  flex,
   ...props
 }: ViewProps & BoxProps) => {
   const computedStyles = [
     getBoxSpacing(props),
-    { justifyContent, alignItems, flexDirection },
+    { justifyContent, alignItems, flexDirection, flex },
     style,
   ];
 

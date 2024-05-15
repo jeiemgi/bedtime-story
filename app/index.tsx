@@ -1,96 +1,103 @@
 import { StyleSheet } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import ThemedIconButton, {
-  ThemedIconButtonProps,
-} from "@/components/ThemedIconButton";
-import ScreenTemplate from "@/components/ScreenTemplate";
 import { useRouter } from "expo-router";
-
-const profiles: Array<{
-  name: string;
-  icon: ThemedIconButtonProps["icon"];
-  href: string;
-}> = [
-  {
-    name: "Matt",
-    icon: "toys",
-    href: "story",
-  },
-  {
-    name: "Alice",
-    icon: "smart-toy",
-    href: "story",
-  },
-  {
-    name: "José",
-    icon: "castle",
-    href: "story",
-  },
-];
-
-// const prompt = `Create a bedtime story for a ${age}-year-old interested in ${interests}.`;
+import { useEffect, useState } from "react";
+import Box from "@/components/themed/Box";
+import Text from "@/components/themed/Text";
+import IconButton from "@/components/themed/IconButton";
+import ScreenTemplate from "@/components/themed/ScreenTemplate";
+import { getAllProfiles, storeProfiles } from "@/js/AsyncStorage";
+import { DEFAULT_PROFILES, StoryProfiles } from "@/constants/data";
+import { type StoryProfile } from "@/constants/data";
+import PressableText from "@/components/themed/PressableText";
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [profiles, setProfiles] = useState<StoryProfiles>([]);
 
-  const onClick = (href: string, name?: string) => {
-    if (name) {
-      router.push(`${href}?name=${name}`);
+  const onClick = (profile?: StoryProfile) => {
+    if (profile) {
+      router.push(
+        `profile` +
+          `?name=${profile.name}` +
+          `&age=${profile.age}` +
+          `&icon=${profile.icon}` +
+          `&interests=${profile.interests}`,
+      );
     } else {
-      router.push(href);
+      router.push(`profile`);
     }
   };
 
+  const onClean = () => {
+    storeProfiles([]);
+    setProfiles([]);
+  };
+
+  useEffect(() => {
+    const initCheck = async () => {
+      const storedProfiles = await getAllProfiles();
+      if (storedProfiles) {
+        setProfiles(storedProfiles);
+      }
+    };
+
+    initCheck();
+  }, []);
+
   return (
     <ScreenTemplate>
-      <ThemedView>
-        <ThemedView style={styles.titleContainer}>
-          <ThemedText align={"center"} type="h2">
-            Welcome to
-          </ThemedText>
-          <ThemedText align={"center"} type="h2">
-            Bedtime Story✨
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText align={"center"} style={styles.container}>
+      <Box mb={4}>
+        <Text align={"center"} type="h2">
+          Welcome to {"\n"}
+          Bedtime Story✨
+        </Text>
+      </Box>
+      <Box mb={4}>
+        <Text align={"center"}>
           Try one of this testing profiles to generate a new story with some AI
           Magic, you can also create your own.
-        </ThemedText>
+        </Text>
+      </Box>
 
-        <ThemedView style={styles.buttonGroup}>
-          {profiles.map(({ href, name, icon }, index) => (
-            <ThemedIconButton
-              icon={icon}
-              title={name}
-              onPress={() => onClick(href, name)}
-              key={`Home-Button-${index}`}
-            />
-          ))}
-          <ThemedIconButton
-            title={"New"}
-            icon={"add"}
-            onPress={() => onClick("profile-create")}
+      <Box
+        flexDirection={"row"}
+        justifyContent={"center"}
+        style={styles.buttonGroup}
+      >
+        {DEFAULT_PROFILES.map((profile, index) => (
+          <IconButton
+            icon={profile.icon}
+            title={profile.name}
+            onPress={() => onClick(profile)}
+            key={`Home-Button-${index}`}
           />
-        </ThemedView>
-      </ThemedView>
+        ))}
+        {profiles.map((profile, index) => (
+          <IconButton
+            title={profile.name}
+            icon={profile.icon}
+            onPress={() => onClick(profile)}
+            key={`Home-Button-${index}`}
+          />
+        ))}
+        <IconButton title={"New"} icon={"add"} onPress={() => onClick()} />
+      </Box>
+
+      {profiles ? (
+        <Box my={8} alignItems={"center"}>
+          <PressableText onPress={onClean} type={"subtitle"}>
+            Clean Profiles
+          </PressableText>
+        </Box>
+      ) : null}
     </ScreenTemplate>
   );
 }
 
 const styles = StyleSheet.create({
   buttonGroup: {
-    gap: 8,
+    gap: 4,
+    marginBottom: 4,
     flexWrap: "wrap",
-    flexDirection: "row",
-    alignItems: "stretch",
-    justifyContent: "space-evenly",
-  },
-  titleContainer: {
-    marginVertical: 50,
-  },
-  container: {
-    marginBottom: 32,
   },
 });

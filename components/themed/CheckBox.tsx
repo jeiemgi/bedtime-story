@@ -1,16 +1,7 @@
-import React from "react";
-import styled from "styled-components/native";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { Text } from "@/components/Text";
 import { Colors } from "@/constants/Colors";
-import { ThemedText } from "@/components/ThemedText";
-
-export const Input = styled.TextInput`
-  font-size: 16px;
-  line-height: 24px;
-  padding: 8px 0;
-  border-bottom-width: 2px;
-  font-family: "SourceSans3";
-`;
+import { useThemeColor } from "@/hooks/useThemeColor";
+import styled from "styled-components/native";
 
 export const CheckBoxWrap = styled.TouchableOpacity`
   padding: 8px 16px;
@@ -50,9 +41,11 @@ export const CheckBox = ({
       onPress={() => onPress(!checked)}
       style={{ backgroundColor, borderColor }}
     >
-      <ThemedText style={{ color }} type={"caption"}>
+      <Text style={{ color }} type={"caption"}>
         {label}
-      </ThemedText>
+      </Text>
     </CheckBoxWrap>
   );
 };
+
+export default CheckBox;

@@ -2,13 +2,13 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { ThemedView } from "@/components/ThemedView";
+import { ScrollView } from "react-native";
+import View from "@/components/themed/View";
 import { LinearGradient } from "expo-linear-gradient";
 import styled from "styled-components/native";
 import type { PropsWithChildren, ReactNode } from "react";
-import { ScrollView } from "react-native";
 
-const Container = styled(ThemedView)`
+const Container = styled(View)`
   flex: 1;
 `;
 

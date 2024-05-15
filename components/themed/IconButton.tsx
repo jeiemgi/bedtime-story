@@ -1,29 +1,26 @@
-import { ThemedText } from "@/components/ThemedText";
 import {
   View,
   StyleSheet,
   TouchableOpacityProps,
   TouchableOpacity,
 } from "react-native";
-import { Colors } from "@/constants/Colors";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { ComponentProps } from "react";
+import Colors from "@/constants/Colors";
+import Text from "@/components/themed/Text";
+import useThemeColor from "@/hooks/useThemeColor";
 import { MaterialIcons } from "@expo/vector-icons";
+import { type ComponentProps } from "react";
 
-export type ThemedIconButtonProps = TouchableOpacityProps & {
+export type IconButtonProps = TouchableOpacityProps & {
   title?: string;
-  icon: ComponentProps<typeof MaterialIcons>["name"];
+  icon?: ComponentProps<typeof MaterialIcons>["name"];
 };
 
-export default function ThemedIconButton({
-  icon,
-  onPress,
-  title,
-}: ThemedIconButtonProps) {
+export default function IconButton({ icon, onPress, title }: IconButtonProps) {
   const backgroundColor = useThemeColor(
     { light: Colors.light.background, dark: Colors.dark.text },
     "background",
   );
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -31,8 +28,10 @@ export default function ThemedIconButton({
       style={[styles.button, { backgroundColor }]}
     >
       <View style={styles.inner}>
-        <MaterialIcons size={40} name={icon} color={Colors.light.text} />
-        {title ? <ThemedText style={styles.text}>{title}</ThemedText> : null}
+        {icon ? (
+          <MaterialIcons size={40} name={icon} color={Colors.light.text} />
+        ) : null}
+        {title ? <Text style={styles.text}>{title}</Text> : null}
       </View>
     </TouchableOpacity>
   );
@@ -40,17 +39,21 @@ export default function ThemedIconButton({
 
 const styles = StyleSheet.create({
   button: {
-    aspectRatio: 1,
-    width: 100,
-    paddingVertical: 16,
+    width: 95,
+    height: 95,
     borderWidth: 2,
     borderRadius: 200,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
   },
   inner: {
+    gap: 4,
     alignItems: "center",
     justifyContent: "center",
   },
   text: {
+    lineHeight: 12,
     fontSize: 12,
     flexWrap: "wrap",
     textAlign: "center",
