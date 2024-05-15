@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import Box from "@/components/themed/Box";
 import Text from "@/components/themed/Text";
 import IconButton from "@/components/themed/IconButton";
@@ -33,16 +33,17 @@ export default function HomeScreen() {
     setProfiles([]);
   };
 
-  useEffect(() => {
-    const initCheck = async () => {
-      const storedProfiles = await getAllProfiles();
-      if (storedProfiles) {
-        setProfiles(storedProfiles);
-      }
-    };
-
-    initCheck();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const initCheck = async () => {
+        const storedProfiles = await getAllProfiles();
+        if (storedProfiles) {
+          setProfiles(storedProfiles);
+        }
+      };
+      initCheck();
+    }, []),
+  );
 
   return (
     <ScreenTemplate>

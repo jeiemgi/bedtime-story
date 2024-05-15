@@ -1,7 +1,7 @@
 import { type IconButtonProps } from "@/components/themed/IconButton";
 
 export type StoryProfile = {
-  id: number;
+  id: string;
   age: string;
   name: string;
   interests: string;
@@ -25,21 +25,21 @@ export const DEFAULT_STORY =
 
 export const DEFAULT_PROFILES: Array<StoryProfile> = [
   {
-    id: 1,
+    id: "1",
     age: "8",
     name: "Matt",
     interests: "Toys, Trucks and Mountains",
     icon: "toys",
   },
   {
-    id: 2,
+    id: "2",
     age: "15",
     name: "Alice",
     interests: "Science, Experiments and Explosions",
     icon: "smart-toy",
   },
   {
-    id: 3,
+    id: "5",
     age: "5",
     name: "José",
     interests: "Castles, Knights, Fights",
