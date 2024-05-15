@@ -1,9 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { DEFAULT_PROFILES, StoryProfile } from "@/constants/data";
+import { StoryProfile } from "@/constants/data";
 
 const ASYNC_STORAGE_PROFILES_KEY = "bedtime_story";
 
-export const storeProfiles = async (value: typeof DEFAULT_PROFILES) => {
+export const storeProfiles = async (value: StoryProfile[]) => {
   try {
     const jsonValue = JSON.stringify(value);
     await AsyncStorage.setItem(ASYNC_STORAGE_PROFILES_KEY, jsonValue);

@@ -31,7 +31,11 @@ export default function IconButton({ icon, onPress, title }: IconButtonProps) {
         {icon ? (
           <MaterialIcons size={40} name={icon} color={Colors.light.text} />
         ) : null}
-        {title ? <Text style={styles.text}>{title}</Text> : null}
+        {title ? (
+          <Text numberOfLines={1} style={styles.text}>
+            {title}
+          </Text>
+        ) : null}
       </View>
     </TouchableOpacity>
   );
@@ -57,5 +61,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     flexWrap: "wrap",
     textAlign: "center",
+    paddingHorizontal: 16,
   },
 });

@@ -14,8 +14,11 @@ function PressableText({
 }: PressableProps & TextProps) {
   return (
     <Pressable
+      disabled={disabled}
       style={({ pressed }) => [
-        { opacity: disabled || pressed ? 0.5 : 1 },
+        {
+          opacity: disabled ? 0.2 : pressed ? 0.5 : 1,
+        },
         props.style,
       ]}
       {...props}
@@ -24,8 +27,8 @@ function PressableText({
         {...{
           type,
           align,
-          lightColor: Colors.scheme.link,
-          darkColor: Colors.scheme.link,
+          lightColor: disabled ? Colors.light.text : Colors.scheme.link,
+          darkColor: disabled ? Colors.dark.text : Colors.scheme.link,
         }}
       >
         {children}

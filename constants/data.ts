@@ -2,10 +2,10 @@ import { type IconButtonProps } from "@/components/themed/IconButton";
 
 export type StoryProfile = {
   id: string;
-  age: string;
-  name: string;
-  interests: string;
-  icon?: IconButtonProps["icon"];
+  age?: string;
+  name?: string;
+  interests?: string;
+  icon?: IconButtonProps["icon"] | "";
 };
 
 export type StoryProfiles = typeof DEFAULT_PROFILES;
@@ -39,7 +39,7 @@ export const DEFAULT_PROFILES: Array<StoryProfile> = [
     icon: "smart-toy",
   },
   {
-    id: "5",
+    id: "3",
     age: "5",
     name: "José",
     interests: "Castles, Knights, Fights",

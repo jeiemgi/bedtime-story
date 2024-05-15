@@ -9,7 +9,6 @@ import Button from "@/components/themed/Button";
 import { number, object, string } from "yup";
 import { useState } from "react";
 import { type StoryProfile } from "@/constants/data";
-import PressableText from "@/components/themed/PressableText";
 
 const InputErrorMessage = ({ error }: { error: string | undefined }) => {
   return (
@@ -28,11 +27,11 @@ const InputErrorMessage = ({ error }: { error: string | undefined }) => {
 };
 
 const defaultInitialValues = {
-  id: 0,
+  id: "",
+  icon: "",
   age: "",
   name: "",
   interests: "",
-  icon: "",
 };
 
 const requiredMsg = "This field is required.";
@@ -86,14 +85,16 @@ function ProfileCreateForm({
         </Box>
 
         <Box flex={1}>
+          <Input $hidden readOnly value={values.id} />
+
           <Box mb={4} alignItems={"center"}>
             <Box mb={1}>
               <IconButton
-                disabled
                 icon={values.icon ? values.icon : "add"}
                 onPress={() => setModalVisible(true)}
               />
             </Box>
+            <Input $hidden readOnly value={values.icon} />
             <InputErrorMessage error={errors.icon} />
           </Box>
 

@@ -1,37 +1,19 @@
-import { StyleSheet } from "react-native";
+import { Alert, StyleSheet } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Box from "@/components/themed/Box";
 import Text from "@/components/themed/Text";
 import IconButton from "@/components/themed/IconButton";
 import ScreenTemplate from "@/components/themed/ScreenTemplate";
+import PressableText from "@/components/themed/PressableText";
+import HomeProfileButton from "@/containers/HomeProfileButton";
 import { getAllProfiles, storeProfiles } from "@/js/AsyncStorage";
 import { DEFAULT_PROFILES, StoryProfiles } from "@/constants/data";
 import { type StoryProfile } from "@/constants/data";
-import PressableText from "@/components/themed/PressableText";
 
 export default function HomeScreen() {
   const router = useRouter();
   const [profiles, setProfiles] = useState<StoryProfiles>([]);
-
-  const onClick = (profile?: StoryProfile) => {
-    if (profile) {
-      router.push(
-        `profile` +
-          `?name=${profile.name}` +
-          `&age=${profile.age}` +
-          `&icon=${profile.icon}` +
-          `&interests=${profile.interests}`,
-      );
-    } else {
-      router.push(`profile`);
-    }
-  };
-
-  const onClean = () => {
-    storeProfiles([]);
-    setProfiles([]);
-  };
 
   useFocusEffect(
     useCallback(() => {
@@ -45,15 +27,59 @@ export default function HomeScreen() {
     }, []),
   );
 
+  const onClick = (profile: StoryProfile) => {
+    router.push(
+      `profile` +
+        `?id=${profile.id}` +
+        `&name=${profile.name}` +
+        `&age=${profile.age}` +
+        `&icon=${profile.icon}` +
+        `&interests=${profile.interests}`,
+    );
+  };
+
+  const onDeleteItem = (profile: StoryProfile) => {
+    const deleteProfile = async () => {
+      const storedProfiles = (await getAllProfiles()) || [];
+      const newProfiles: StoryProfile[] = [...storedProfiles].filter(
+        (_p) => _p.id !== profile.id,
+      );
+      await storeProfiles(newProfiles);
+      setProfiles(newProfiles);
+    };
+
+    Alert.alert("Delete Profile?", "This action cannot be undone.", [
+      { text: "Cancel" },
+      { text: "Delete", style: "destructive", onPress: deleteProfile },
+    ]);
+  };
+
+  const onClean = async () => {
+    const cleanProfiles = async () => {
+      await storeProfiles([]);
+      setProfiles([]);
+    };
+
+    Alert.alert("Delete all profiles?", "All default profiles will stay", [
+      { text: "Cancel" },
+      { text: "Delete", style: "destructive", onPress: cleanProfiles },
+    ]);
+  };
+
+  const allProfiles = useMemo(
+    () => [...DEFAULT_PROFILES, ...profiles],
+    [profiles],
+  );
+
   return (
     <ScreenTemplate>
-      <Box mb={4}>
-        <Text align={"center"} type="h2">
+      <Box>
+        <Text align={"center"} type="h1">
           Welcome to {"\n"}
           Bedtime Story✨
         </Text>
       </Box>
-      <Box mb={4}>
+      <Box my={6}>
         <Text align={"center"}>
           Try one of this testing profiles to generate a new story with some AI
           Magic, you can also create your own.
@@ -66,27 +92,34 @@ export default function HomeScreen() {
         style={styles.buttonGroup}
       >
         {DEFAULT_PROFILES.map((profile, index) => (
-          <IconButton
-            icon={profile.icon}
-            title={profile.name}
+          <HomeProfileButton
+            key={`Profile-Button-${index}`}
             onPress={() => onClick(profile)}
-            key={`Home-Button-${index}`}
+            profile={{ ...profile, id: `${index}` }}
           />
         ))}
         {profiles.map((profile, index) => (
-          <IconButton
-            title={profile.name}
-            icon={profile.icon}
+          <HomeProfileButton
+            key={`Profile-Button-${index}`}
+            onDelete={() => onDeleteItem(profile)}
             onPress={() => onClick(profile)}
-            key={`Home-Button-${index}`}
+            profile={{ ...profile, id: `${index}` }}
           />
         ))}
-        <IconButton title={"New"} icon={"add"} onPress={() => onClick()} />
+        <IconButton
+          title={"New"}
+          icon={"add"}
+          onPress={() => router.push(`profile?id=${allProfiles.length + 1}`)}
+        />
       </Box>
 
       {profiles ? (
         <Box my={8} alignItems={"center"}>
-          <PressableText onPress={onClean} type={"subtitle"}>
+          <PressableText
+            type={"subtitle"}
+            onPress={onClean}
+            disabled={profiles.length === 0}
+          >
             Clean Profiles
           </PressableText>
         </Box>
@@ -97,7 +130,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   buttonGroup: {
-    gap: 4,
+    gap: 16,
     marginBottom: 4,
     flexWrap: "wrap",
   },
