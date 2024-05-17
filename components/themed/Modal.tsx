@@ -6,7 +6,6 @@ import View from "@/components/themed/View";
 
 const ModalStyle = styled(RawModal)`
   flex: 1;
-  background-color: red;
 `;
 
 const ModalContent = styled(View)`

@@ -1,10 +1,9 @@
-import React from "react";
 import Box from "@/components/themed/Box";
-import Colors from "@/constants/Colors";
 import IconButton from "@/components/themed/IconButton";
 import { MaterialIcons } from "@expo/vector-icons";
+import Colors from "@/constants/Colors";
 import styled from "styled-components/native";
-import { type StoryProfile } from "@/constants/data";
+import type { StoryProfile } from "@/js/StoryProfile";
 
 function HomeProfileButton({
   profile,

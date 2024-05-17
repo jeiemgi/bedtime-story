@@ -7,6 +7,7 @@ import {
 import Colors from "@/constants/Colors";
 import { useEffect } from "react";
 import { useFonts } from "expo-font";
+import { ProfilesContextProvider } from "@/containers/ProfilesContext";
 import useColorScheme from "@/hooks/useColorScheme";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
@@ -37,21 +38,24 @@ export default function RootLayout() {
 
   const headerTintColor =
     colorScheme === "dark" ? Colors.dark.tint : Colors.light.tint;
+
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack
-        screenOptions={{
-          headerTintColor,
-          headerTitle: "",
-          headerTransparent: true,
-          headerBackTitleVisible: false,
-        }}
-      >
-        <Stack.Screen name={"index"} />
-        <Stack.Screen name={"profile"} />
-        <Stack.Screen name={"story"} />
-        <Stack.Screen name={"+not-found"} />
-      </Stack>
+      <ProfilesContextProvider>
+        <Stack
+          screenOptions={{
+            headerTintColor,
+            headerTitle: "",
+            headerTransparent: true,
+            headerBackTitleVisible: false,
+          }}
+        >
+          <Stack.Screen name={"index"} />
+          <Stack.Screen name={"profile"} />
+          <Stack.Screen name={"story"} />
+          <Stack.Screen name={"+not-found"} />
+        </Stack>
+      </ProfilesContextProvider>
     </ThemeProvider>
   );
 }

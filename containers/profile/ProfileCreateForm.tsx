@@ -1,14 +1,12 @@
-import { useFormik } from "formik";
+import { useState } from "react";
+import { FormikProps } from "formik";
 import Box from "@/components/themed/Box";
 import Colors from "@/constants/Colors";
 import Input from "@/components/themed/Input";
 import Text from "@/components/themed/Text";
 import IconsModal from "@/containers/IconsModal";
 import IconButton from "@/components/themed/IconButton";
-import Button from "@/components/themed/Button";
-import { number, object, string } from "yup";
-import { useState } from "react";
-import { type StoryProfile } from "@/constants/data";
+import type { StoryProfile } from "@/js/StoryProfile";
 
 const InputErrorMessage = ({ error }: { error: string | undefined }) => {
   return (
@@ -26,75 +24,51 @@ const InputErrorMessage = ({ error }: { error: string | undefined }) => {
   );
 };
 
-const defaultInitialValues = {
-  id: "",
-  icon: "",
-  age: "",
-  name: "",
-  interests: "",
-};
-
-const requiredMsg = "This field is required.";
-const numberMsg = "This field should be a number.";
-
-const validationSchema = object().shape({
-  name: string().required(requiredMsg),
-  age: number().typeError(numberMsg).required(requiredMsg),
-  interests: string().required(requiredMsg),
-  icon: string().required(requiredMsg),
-});
-
+interface Props extends FormikProps<StoryProfile> {
+  initialValues: StoryProfile;
+}
 function ProfileCreateForm({
-  onSubmit,
-  initialValues = defaultInitialValues,
-}: {
-  initialValues?: Omit<StoryProfile, "icon">;
-  onSubmit: (values: StoryProfile) => void;
-}) {
+  setFieldValue,
+  values,
+  errors,
+  handleBlur,
+  handleChange,
+}: Props) {
   const [modalVisible, setModalVisible] = useState(false);
-  const {
-    handleChange,
-    handleBlur,
-    handleSubmit,
-    setFieldValue,
-    values,
-    errors,
-    isValid,
-  } = useFormik({
-    initialValues,
-    validationSchema,
-    validateOnBlur: false,
-    onSubmit,
-  });
+
+  const onIconPress = async (iconName: string) => {
+    await setFieldValue("icon", iconName);
+    setModalVisible(false);
+  };
 
   return (
     <>
-      <IconsModal
-        visible={modalVisible}
-        onItemPress={(iconName) => {
-          setModalVisible(false);
-          setFieldValue("icon", iconName);
-        }}
-      />
-
+      <IconsModal onItemPress={onIconPress} visible={modalVisible} />
       <Box flex={1}>
-        <Box mb={4}>
-          <Text type={"h1"} align={"center"}>
-            {values.name ? `${values.name}'s Profile` : "New profile"}
+        <Input $hidden readOnly value={values.id} />
+        <Input $hidden readOnly value={values.icon} />
+
+        <Box>
+          <Text
+            type={"display"}
+            align={"center"}
+            numberOfLines={1}
+            lightColor={values.name ? "black" : "white"}
+          >
+            {values.name ? ` ${values.name}'s` : ""}
           </Text>
-        </Box>
 
-        <Box flex={1}>
-          <Input $hidden readOnly value={values.id} />
+          <Text align={"center"} type={"caption"}>
+            {values.name ? "profile" : " "}
+          </Text>
 
-          <Box mb={4} alignItems={"center"}>
+          <Box my={4} alignItems={"center"}>
             <Box mb={1}>
               <IconButton
                 icon={values.icon ? values.icon : "add"}
                 onPress={() => setModalVisible(true)}
               />
             </Box>
-            <Input $hidden readOnly value={values.icon} />
             <InputErrorMessage error={errors.icon} />
           </Box>
 
@@ -121,7 +95,7 @@ function ProfileCreateForm({
             <InputErrorMessage error={errors.age} />
           </Box>
 
-          <Box mb={4}>
+          <Box>
             <Text type={"caption"}>What are you interested in?</Text>
             <Input
               value={values.interests}
@@ -132,12 +106,6 @@ function ProfileCreateForm({
             <InputErrorMessage error={errors.interests} />
           </Box>
         </Box>
-
-        <Button
-          disabled={!isValid}
-          title={"Create my story"}
-          onPress={() => handleSubmit()}
-        />
       </Box>
     </>
   );

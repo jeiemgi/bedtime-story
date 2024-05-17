@@ -29,7 +29,7 @@ export default function IconButton({ icon, onPress, title }: IconButtonProps) {
     >
       <View style={styles.inner}>
         {icon ? (
-          <MaterialIcons size={40} name={icon} color={Colors.light.text} />
+          <MaterialIcons size={50} name={icon} color={Colors.light.text} />
         ) : null}
         {title ? (
           <Text numberOfLines={1} style={styles.text}>

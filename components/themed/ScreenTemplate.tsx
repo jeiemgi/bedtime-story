@@ -1,9 +1,10 @@
 import {
+  EdgeInsets,
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { ScrollView } from "react-native";
 import View from "@/components/themed/View";
+import { ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import styled from "styled-components/native";
 import type { PropsWithChildren, ReactNode } from "react";
@@ -17,58 +18,66 @@ const Content = styled(SafeAreaView)`
   padding: 0 32px;
 `;
 
-export default function ScreenTemplate({ children }: PropsWithChildren) {
-  const { top } = useSafeAreaInsets();
+type ScreenProps = PropsWithChildren<{
+  BottomView?: ReactNode;
+  safeAreaView?: boolean;
+}>;
 
+export default function ScreenTemplate({
+  children,
+  BottomView,
+  safeAreaView,
+}: ScreenProps) {
+  const { top } = useSafeAreaInsets();
   return (
     <Container style={{ paddingTop: top }}>
       <Content>{children}</Content>
+      {BottomView ? <ScreenBottom>{BottomView}</ScreenBottom> : null}
     </Container>
   );
 }
 
-export function ScreenTemplateScroll({
-  children,
-  BottomView,
-}: PropsWithChildren<{ BottomView?: ReactNode }>) {
+export function ScreenTemplateScroll({ children, BottomView }: ScreenProps) {
   const { top } = useSafeAreaInsets();
 
   return (
-    <Container style={{ paddingTop: top }}>
-      <Container as={SafeAreaView}>
-        <ScrollView
-          contentContainerStyle={{
-            paddingHorizontal: 32,
-            paddingBottom: BottomView ? 150 : 0,
-          }}
-        >
-          {children}
-        </ScrollView>
-      </Container>
-      <ScreenBottom>{BottomView}</ScreenBottom>
+    <Container>
+      <ScrollView
+        contentContainerStyle={{
+          paddingTop: top,
+          paddingBottom: BottomView ? 150 : 0,
+        }}
+      >
+        <Content>{children}</Content>
+      </ScrollView>
+
+      {BottomView ? <ScreenBottom>{BottomView}</ScreenBottom> : null}
     </Container>
   );
 }
-export const ScreenBottom = ({ children }: { children: ReactNode }) => {
-  const { bottom } = useSafeAreaInsets();
+export const ScreenBottom = ({ children }: PropsWithChildren) => {
+  const insets = useSafeAreaInsets();
   return (
     <BottomGradient
-      style={{ paddingVertical: bottom }}
-      locations={[0, 0.5]}
-      colors={["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 0.8)"]}
+      locations={[0, 0.33, 0.7]}
+      colors={[
+        "rgba(255,255,255,0)",
+        "rgba(255,255,255,0.7)",
+        "rgba(255,255,255, 0.8)",
+      ]}
     >
-      {children}
+      <ScreenBottomStyle $insets={insets}>{children}</ScreenBottomStyle>
     </BottomGradient>
   );
 };
 
+const ScreenBottomStyle = styled.View<{ $insets: EdgeInsets }>`
+  padding: ${(props) => `32px ${props.$insets.bottom}px`};
+`;
+
 const BottomGradient = styled(LinearGradient)`
-  flex: 1;
   left: 0;
   bottom: 0;
   width: 100%;
-  height: 120px;
-  padding-left: 32px;
-  padding-right: 32px;
   position: absolute;
 `;

@@ -1,14 +1,4 @@
-import { type IconButtonProps } from "@/components/themed/IconButton";
-
-export type StoryProfile = {
-  id: string;
-  age?: string;
-  name?: string;
-  interests?: string;
-  icon?: IconButtonProps["icon"] | "";
-};
-
-export type StoryProfiles = typeof DEFAULT_PROFILES;
+import type { StoryProfile } from "@/js/StoryProfile";
 
 export const DEFAULT_TITLE = "Finny's Underwater Race";
 
@@ -23,26 +13,29 @@ export const DEFAULT_STORY =
   "\n" +
   "Finny, Coral, and Dash returned to the city as heroes. From that day on, Finny was not just known as the fastest swimming car, but also the kindest. Every night, under the shimmering moonlight, he'd tell stories of the deep sea to his new friends, sharing adventures and dreams. And so, Finny’s underwater races continued, filled with friendship, fun, and the joy of discovery.";
 
-export const DEFAULT_PROFILES: Array<StoryProfile> = [
+export const DEFAULT_PROFILES: StoryProfile[] = [
   {
     id: "1",
     age: "8",
     name: "Matt",
-    interests: "Toys, Trucks and Mountains",
     icon: "toys",
+    interests: "Toys, Trucks and Mountains",
+    isDefault: true,
   },
   {
     id: "2",
     age: "15",
     name: "Alice",
-    interests: "Science, Experiments and Explosions",
     icon: "smart-toy",
+    interests: "Science, Experiments and Explosions",
+    isDefault: true,
   },
   {
     id: "3",
     age: "5",
     name: "José",
-    interests: "Castles, Knights, Fights",
     icon: "castle",
+    interests: "Castles, Knights, Fights",
+    isDefault: true,
   },
 ];

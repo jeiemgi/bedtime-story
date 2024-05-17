@@ -2,7 +2,7 @@ import useThemeColor from "@/hooks/useThemeColor";
 import Colors from "@/constants/Colors";
 import Text from "@/components/themed/Text";
 import View from "@/components/themed/View";
-import { Pressable, ViewStyle } from "react-native";
+import { Falsy, Pressable, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 import { type PressableProps } from "react-native";
 
@@ -10,12 +10,51 @@ interface ButtonProps extends PressableProps {
   title: string;
 }
 
-const InnerStyle = styled(View)`
+function Button({ title, disabled, ...props }: ButtonProps) {
+  const backgroundPressable = useThemeColor({}, "background");
+
+  const backgroundColor = useThemeColor({
+    light: Colors.dark.background,
+    dark: Colors.light.background,
+  });
+
+  return (
+    <PressableStyle
+      disabled={disabled}
+      style={[
+        { backgroundColor: backgroundPressable },
+        props.style as ViewStyle,
+      ]}
+      {...props}
+    >
+      {({ pressed }) => (
+        <InnerStyle
+          $pressed={pressed}
+          $disabled={disabled}
+          style={{ backgroundColor }}
+        >
+          <ButtonText>{title}</ButtonText>
+        </InnerStyle>
+      )}
+    </PressableStyle>
+  );
+}
+
+const PressableStyle = styled(Pressable)`
   height: 60px;
+  overflow: hidden;
+  border-radius: 16px;
+`;
+
+const InnerStyle = styled(View)<{
+  $pressed: boolean | null | undefined;
+  $disabled: boolean | null | undefined;
+}>`
+  height: 100%;
   border-width: 2px;
-  border-radius: 10px;
   align-items: center;
   justify-content: center;
+  opacity: ${(props) => (props.$pressed || props.$disabled ? 0.5 : 1)};
 `;
 
 const ButtonText = styled(Text)`
@@ -28,26 +67,5 @@ ButtonText.defaultProps = {
   lightColor: Colors.dark.text,
   darkColor: Colors.light.text,
 };
-
-function Button({ title, disabled, ...props }: ButtonProps) {
-  const backgroundColor = useThemeColor({
-    light: Colors.dark.background,
-    dark: Colors.dark.background,
-  });
-
-  return (
-    <Pressable
-      style={({ pressed }) => [
-        { opacity: disabled || pressed ? 0.5 : 1 },
-        props.style as ViewStyle,
-      ]}
-      {...props}
-    >
-      <InnerStyle style={{ backgroundColor }}>
-        <ButtonText>{title}</ButtonText>
-      </InnerStyle>
-    </Pressable>
-  );
-}
 
 export default Button;

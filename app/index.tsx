@@ -1,75 +1,21 @@
-import { Alert, StyleSheet } from "react-native";
-import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
+import { StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
+import { useProfilesContext } from "@/containers/ProfilesContext";
 import Box from "@/components/themed/Box";
 import Text from "@/components/themed/Text";
 import IconButton from "@/components/themed/IconButton";
 import ScreenTemplate from "@/components/themed/ScreenTemplate";
 import PressableText from "@/components/themed/PressableText";
 import HomeProfileButton from "@/containers/HomeProfileButton";
-import { getAllProfiles, storeProfiles } from "@/js/AsyncStorage";
-import { DEFAULT_PROFILES, StoryProfiles } from "@/constants/data";
-import { type StoryProfile } from "@/constants/data";
+import { DEFAULT_PROFILES } from "@/constants/data";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const [profiles, setProfiles] = useState<StoryProfiles>([]);
+  const { profiles, deleteProfile, deleteAllProfiles } = useProfilesContext();
 
-  useFocusEffect(
-    useCallback(() => {
-      const initCheck = async () => {
-        const storedProfiles = await getAllProfiles();
-        if (storedProfiles) {
-          setProfiles(storedProfiles);
-        }
-      };
-      initCheck();
-    }, []),
-  );
-
-  const onClick = (profile: StoryProfile) => {
-    router.push(
-      `profile` +
-        `?id=${profile.id}` +
-        `&name=${profile.name}` +
-        `&age=${profile.age}` +
-        `&icon=${profile.icon}` +
-        `&interests=${profile.interests}`,
-    );
+  const onClick = (id: string) => {
+    router.push(`profile?id=${id}`);
   };
-
-  const onDeleteItem = (profile: StoryProfile) => {
-    const deleteProfile = async () => {
-      const storedProfiles = (await getAllProfiles()) || [];
-      const newProfiles: StoryProfile[] = [...storedProfiles].filter(
-        (_p) => _p.id !== profile.id,
-      );
-      await storeProfiles(newProfiles);
-      setProfiles(newProfiles);
-    };
-
-    Alert.alert("Delete Profile?", "This action cannot be undone.", [
-      { text: "Cancel" },
-      { text: "Delete", style: "destructive", onPress: deleteProfile },
-    ]);
-  };
-
-  const onClean = async () => {
-    const cleanProfiles = async () => {
-      await storeProfiles([]);
-      setProfiles([]);
-    };
-
-    Alert.alert("Delete all profiles?", "All default profiles will stay", [
-      { text: "Cancel" },
-      { text: "Delete", style: "destructive", onPress: cleanProfiles },
-    ]);
-  };
-
-  const allProfiles = useMemo(
-    () => [...DEFAULT_PROFILES, ...profiles],
-    [profiles],
-  );
 
   return (
     <ScreenTemplate>
@@ -91,25 +37,20 @@ export default function HomeScreen() {
         justifyContent={"center"}
         style={styles.buttonGroup}
       >
-        {DEFAULT_PROFILES.map((profile, index) => (
-          <HomeProfileButton
-            key={`Profile-Button-${index}`}
-            onPress={() => onClick(profile)}
-            profile={{ ...profile, id: `${index}` }}
-          />
-        ))}
         {profiles.map((profile, index) => (
           <HomeProfileButton
-            key={`Profile-Button-${index}`}
-            onDelete={() => onDeleteItem(profile)}
-            onPress={() => onClick(profile)}
-            profile={{ ...profile, id: `${index}` }}
+            profile={profile}
+            onPress={() => onClick(profile.id)}
+            onDelete={
+              !profile.isDefault ? () => deleteProfile(profile.id) : undefined
+            }
+            key={`HomeProfileButton-${profile.id}`}
           />
         ))}
         <IconButton
           title={"New"}
           icon={"add"}
-          onPress={() => router.push(`profile?id=${allProfiles.length + 1}`)}
+          onPress={() => router.push(`profile?id=${profiles.length + 1}`)}
         />
       </Box>
 
@@ -117,8 +58,8 @@ export default function HomeScreen() {
         <Box my={8} alignItems={"center"}>
           <PressableText
             type={"subtitle"}
-            onPress={onClean}
-            disabled={profiles.length === 0}
+            onPress={deleteAllProfiles}
+            disabled={profiles.length === DEFAULT_PROFILES.length}
           >
             Clean Profiles
           </PressableText>

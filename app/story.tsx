@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import useThemeColor from "@/hooks/useThemeColor";
+import styled from "styled-components/native";
+import Box from "@/components/themed/Box";
 import Text from "@/components/themed/Text";
 import Button from "@/components/themed/Button";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { ActivityIndicator } from "react-native";
-import { DEFAULT_STORY, DEFAULT_TITLE, StoryProfile } from "@/constants/data";
 import ScreenTemplate, {
   ScreenTemplateScroll,
 } from "@/components/themed/ScreenTemplate";
-import styled from "styled-components/native";
-import Box from "@/components/themed/Box";
+import { DEFAULT_STORY, DEFAULT_TITLE } from "@/constants/data";
+import { isProfileValid, StoryProfileController } from "@/js/StoryProfile";
+import type { StoryProfile } from "@/js/StoryProfile";
 
 const TopContainer = styled(Animated.View)`
   margin-bottom: 32px;
@@ -26,27 +28,22 @@ const AnimatedView = styled(Animated.View)`
 `;
 
 function Story() {
-  const params = useLocalSearchParams<StoryProfile>();
+  const params = useLocalSearchParams<Partial<StoryProfile>>();
   const indicatorColor = useThemeColor({}, "text");
   const backgroundColor = useThemeColor({}, "background");
   const [title, setTitle] = useState<string | null>(null);
   const [story, setStory] = useState<string | null>(null);
 
   useEffect(() => {
-    // import { generateStory } from "@/js/api";
-    // Example on how it would work when actually fetching the API.
-    // SEE "/js/api.ts" to se the example.
-    //
-    // const fetch = async () => {
-    //   const prompt = getPrompt();
-    //   await generateStory(prompt).then((res) => {
-    //     const storyRes = res?.choices[0].message.content;
-    //     if (storyRes) setStory(storyRes);
-    //   });
-    // };
-    //
-    // setStory(null);
-    // fetch()
+    const fetch = async () => {
+      const isValid = isProfileValid(params);
+
+      if (isValid) {
+        const profile = new StoryProfileController(params as StoryProfile);
+        await profile.generateStory();
+      }
+    };
+    fetch();
 
     // Just test data
     setTimeout(() => {

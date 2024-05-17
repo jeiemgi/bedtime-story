@@ -85,9 +85,8 @@ const Box = ({
   ...props
 }: ViewProps & BoxProps) => {
   const computedStyles = [
-    getBoxSpacing(props),
+    style ? style : getBoxSpacing(props),
     { justifyContent, alignItems, flexDirection, flex },
-    style,
   ];
 
   return (
